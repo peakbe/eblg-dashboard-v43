@@ -230,9 +230,21 @@ if (!rw) {
 console.log("RUNWAY =", rw.name);
 
 /* PHASE */
-let phase = (rw.name === "22") ? "Décollage" : "Atterrissage";
+let phase;
+
+// 1) Lire la valeur du sélecteur
+const manual = document.getElementById("phase-select").value;
+
+// 2) Si manuel → override
+if (manual !== "auto") {
+  phase = manual;
+} else {
+  // 3) Sinon → logique automatique
+  phase = (rw.name === "22") ? "Décollage" : "Atterrissage";
+}
 
 console.log("PHASE =", phase);
+
 
 document.getElementById("runway-info").textContent =
   `Piste ${rw.name} – ${phase}`;
@@ -249,6 +261,11 @@ document.getElementById("runway-info").textContent =
       ? impacted.map(s => `<span class="tag impacted">${s.id}</span>`).join(" ")
       : "Aucun sonomètre impacté.";
 }
+
+/* === LISTENERS === */
+document.getElementById("phase-select").addEventListener("change", () => {
+  refresh();
+});
 
 /* 🔧 FIX : attendre que la carte soit prête */
 map.whenReady(() => {
