@@ -209,9 +209,11 @@ function updateRunwayPanel(runway, windDir, windSpeed) {
     panel.className = runway === "22" ? "runway-22" : "runway-04";
 
     panel.innerText =
-        `Piste ${runway} (${r.heading}°) – ` +
-        `${info.crosswind} kt crosswind (Δ${info.angleDiff}°) – ` +
-        `Vent ${windDir}°/${windSpeed} kt`;
+    `Piste ${runway} (${r.heading}°) – ` +
+    `${phase === "landing" ? "Atterrissage" : "Décollage"} – ` +
+    `${info.crosswind} kt crosswind (Δ${info.angleDiff}°) – ` +
+    `Vent ${windDir}°/${windSpeed} kt`;
+
 }
 
 // ======================================================
@@ -323,7 +325,7 @@ function updateMetarUI(data) {
     const windDir = data.wind_direction?.value;
     const windSpeed = data.wind_speed?.value;
     const runway = getRunwayFromWind(windDir);
-
+    
     updateSonometers(runway);
     drawRunway(runway);
     drawCorridor(runway);
