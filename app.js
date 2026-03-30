@@ -68,9 +68,9 @@ function updateTafUI(data) {
     el.innerText = data.raw || "TAF disponible";
 }
 
-// ======================================================
-// FIDS (structure prête, UI à adapter selon ton design)
-// ======================================================
+// =========================
+// FIDS (UI compacte + colorée)
+// =========================
 
 async function loadFids() {
     const data = await fetchJSON(ENDPOINTS.fids);
@@ -78,16 +78,35 @@ async function loadFids() {
 }
 
 function updateFidsUI(data) {
-    const el = document.getElementById("fids");
-    if (!el) return;
+    const container = document.getElementById("fids");
+    if (!container) return;
 
     if (data.fallback) {
-        el.innerText = "FIDS indisponible (fallback activé)";
+        container.innerHTML = `<div class="fids-row fids-unknown">FIDS indisponible</div>`;
         return;
     }
 
-    // À remplacer par ton UI FIDS finale
-    el.innerText = JSON.stringify(data, null, 2);
+    container.innerHTML = ""; // reset
+
+    data.forEach(flight => {
+        const status = (flight.status || "").toLowerCase();
+
+        let cssClass = "fids-unknown";
+        if (status.includes("on time")) cssClass = "fids-on-time";
+        if (status.includes("delayed")) cssClass = "fids-delayed";
+        if (status.includes("cancel")) cssClass = "fids-cancelled";
+        if (status.includes("board")) cssClass = "fids-boarding";
+
+        const row = document.createElement("div");
+        row.className = `fids-row ${cssClass}`;
+        row.innerHTML = `
+            <span>${flight.flight}</span>
+            <span>${flight.destination}</span>
+            <span>${flight.time}</span>
+            <span>${flight.status}</span>
+        `;
+        container.appendChild(row);
+    });
 }
 
 // ======================================================
