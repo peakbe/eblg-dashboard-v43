@@ -7,11 +7,16 @@ import { haversineDistance } from "./helpers.js";
 
 export let sonometers = {};
 export let heatLayer = null;
+export let heatHistory = [];
+export const MAX_HISTORY = 50;
 
-/**
- * Surligne un sonomètre dans la liste.
- * @param {string} id
- */
+// Cluster layer
+export let clusterLayer = L.markerClusterGroup();
+
+
+// ------------------------------------------------------
+// 1) Surlignage dans la liste
+// ------------------------------------------------------
 export function highlightSonometerInList(id) {
     const list = document.getElementById("sono-list");
     if (!list) return;
@@ -27,10 +32,11 @@ export function highlightSonometerInList(id) {
     }
 }
 
-/**
- * Met à jour la heatmap en fonction des statuts.
- * @param {L.Map} map
- */
+
+
+// ------------------------------------------------------
+// 2) Heatmap dynamique
+// ------------------------------------------------------
 export function updateHeatmap(map) {
     if (heatLayer) map.removeLayer(heatLayer);
 
@@ -49,11 +55,11 @@ export function updateHeatmap(map) {
     }).addTo(map);
 }
 
-/**
- * Affiche le panneau latéral détaillé.
- * @param {string} id
- * @param {[number,number]} runwayStart
- */
+
+
+// ------------------------------------------------------
+// 3) Panneau détail
+// ------------------------------------------------------
 export function showDetailPanel(id, runwayStart) {
     const s = sonometers[id];
     if (!s) return;
@@ -79,36 +85,11 @@ export function showDetailPanel(id, runwayStart) {
     panel.classList.remove("hidden");
 }
 
-/**
- * Initialise les sonomètres sur la carte.
- * @param {L.Map} map
- */
-export function initSonometers(map) {
-    SONOS.forEach(s => {
-        const marker = L.circleMarker([s.lat, s.lon], {
-            radius: 6,
-            color: "gray",
-            fillColor: "gray",
-            fillOpacity: 0.9,
-            weight: 1
-        }).addTo(map);
 
-        const address = SONO_ADDRESSES[s.id] || "Adresse inconnue";
 
-        marker.bindTooltip(s.id);
-
-        marker.on("click", () => {
-            marker.bindPopup(`<b>${s.id}</b><br>${address}`).openPopup();
-            highlightSonometerInList(s.id);
-            showDetailPanel(s.id, [50.64695, 5.44340]); // centre piste 22
-        });
-
-        sonometers[s.id] = { ...s, marker, status: "UNKNOWN" };
-    });
-}
-export let heatHistory = [];
-export const MAX_HISTORY = 50; // 50 snapshots
-
+// ------------------------------------------------------
+// 4) Historique Heatmap
+// ------------------------------------------------------
 export function snapshotHeatmap() {
     const snapshot = Object.values(sonometers).map(s => ({
         lat: s.lat,
@@ -119,6 +100,7 @@ export function snapshotHeatmap() {
     heatHistory.push(snapshot);
     if (heatHistory.length > MAX_HISTORY) heatHistory.shift();
 }
+
 export async function playHeatmapHistory(map) {
     for (const snapshot of heatHistory) {
         if (heatLayer) map.removeLayer(heatLayer);
@@ -140,8 +122,10 @@ export async function playHeatmapHistory(map) {
         await new Promise(r => setTimeout(r, 300));
     }
 }
-export let clusterLayer = L.markerClusterGroup();
 
+// ------------------------------------------------------
+// 5) Initialisation des sonomètres (clusters + markers)
+// ------------------------------------------------------
 export function initSonometers(map) {
     SONOS.forEach(s => {
         const marker = L.circleMarker([s.lat, s.lon], {
