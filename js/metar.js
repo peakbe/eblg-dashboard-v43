@@ -8,6 +8,7 @@ import { getRunwayFromWind } from "./runways.js";
 import { updateHeatmap } from "./sonometers.js";
 import { drawRunway, drawCorridor } from "./runways.js";
 import { RUNWAYS, computeCrosswind, updateRunwayPanel } from "./runways.js";
+import { updateHeatmapDynamic } from "./sonometers.js";
 
 /**
  * Charge le METAR depuis le proxy.
@@ -48,6 +49,7 @@ export function updateMetarUI(data) {
 
     // 2) Mise à jour heatmap après stabilisation du rendu
     requestAnimationFrame(() => {
-        updateHeatmap(window.map, windDir, windSpeed, runway);
+        updateHeatmapDynamic(window.map, windDir, windSpeed, RUNWAYS[runway]?.heading);
+
     });
 }
