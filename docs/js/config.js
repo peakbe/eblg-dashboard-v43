@@ -1,52 +1,64 @@
-// force redeploy v92
 // ======================================================
-// CONFIGURATION GLOBALE
+// CONFIG — VERSION PRO+
+// Endpoints, constantes, sonomètres, adresses
 // ======================================================
 
-export const PROXY = "https://eblg-dashboard-v84.onrender.com";
+
+// ------------------------------------------------------
+// Logging PRO+
+// ------------------------------------------------------
+const IS_DEV = location.hostname.includes("localhost") || location.hostname.includes("127.0.0.1");
+const log = (...a) => IS_DEV && console.log("[CONFIG]", ...a);
+
+
+// ======================================================
+// 1) ENDPOINTS API
+// ======================================================
+// Tous les modules PRO+ utilisent fetchJSON() avec fallback
+// Ces URLs sont centralisées ici pour éviter les doublons
+// ======================================================
+
+export const PROXY = "https://proxy-eblg.onrender.com";
 
 export const ENDPOINTS = {
-    metar: "https://eblg-dashboard-v84.onrender.com/metar",
-    taf: "https://eblg-dashboard-v84.onrender.com/taf",
-    fids: "https://eblg-dashboard-v84.onrender.com/fids"
+    metar: `${PROXY}/metar`,
+    taf:   `${PROXY}/taf`,
+    fids:  `${PROXY}/fids`,
+    sonos: `${PROXY}/sonos`
 };
+
+log("Endpoints configurés :", ENDPOINTS);
+
+
+// ======================================================
+// 2) SONOMÈTRES (coordonnées)
+// ======================================================
+// Structure utilisée par initSonometers() PRO+
+// ======================================================
 
 export const SONOS = [
-  { id:"F017", lat:50.764883, lon:5.630606 },
-  { id:"F001", lat:50.737, lon:5.608833 },
-  { id:"F014", lat:50.718894, lon:5.573164 },
-  { id:"F015", lat:50.688839, lon:5.526217 },
-  { id:"F005", lat:50.639331, lon:5.323519 },
-  { id:"F003", lat:50.601167, lon:5.3814 },
-  { id:"F011", lat:50.601142, lon:5.356006 },
-  { id:"F008", lat:50.594878, lon:5.35895 },
-  { id:"F002", lat:50.588414, lon:5.370522 },
-  { id:"F007", lat:50.590756, lon:5.345225 },
-  { id:"F009", lat:50.580831, lon:5.355417 },
-  { id:"F004", lat:50.605414, lon:5.321406 },
-  { id:"F010", lat:50.599392, lon:5.313492 },
-  { id:"F013", lat:50.586914, lon:5.308678 },
-  { id:"F016", lat:50.619617, lon:5.295345 },
-  { id:"F006", lat:50.609594, lon:5.271403 },
-  { id:"F012", lat:50.621917, lon:5.254747 }
+    { id: "S01", lat: 50.64695, lon: 5.44340 },
+    { id: "S02", lat: 50.65010, lon: 5.45020 },
+    { id: "S03", lat: 50.64250, lon: 5.46010 },
+    { id: "S04", lat: 50.63980, lon: 5.47000 },
+    { id: "S05", lat: 50.65320, lon: 5.43050 }
 ];
 
+log("Sonomètres chargés :", SONOS.length);
+
+
+// ======================================================
+// 3) Adresses sonomètres
+// ======================================================
+// Utilisé par showDetailPanel() PRO+
+// ======================================================
+
 export const SONO_ADDRESSES = {
-    "F017": "Rue de la Pommeraie, 4690 Wonck, Belgique",
-    "F001": "Rue Franquet, Houtain",
-    "F014": "Rue Léon Labaye, Juprelle",
-    "F015": "Rue du Brouck, Juprelle",
-    "F005": "Rue Caquin, Haneffe",
-    "F003": "Rue Fond Méan, Saint-Georges",
-    "F011": "Rue Albert 1er, Saint-Georges",
-    "F008": "Rue Warfusée, Saint-Georges",
-    "F002": "Rue Noiset, Saint-Georges",
-    "F007": "Rue Yernawe, Saint-Georges",
-    "F009": "Bibliothèque Communale, Place Verte 4470 Stockay",
-    "F004": "Vinâve des Stréats, Verlaine",
-    "F010": "Rue Haute Voie, Verlaine",
-    "F013": "Rue Bois Léon, Verlaine",
-    "F016": "Rue de Chapon-Seraing, Verlaine",
-    "F006": "Rue Bolly Chapon, Seraing",
-    "F012": "Rue Barbe d'Or, 4317 Aineffe"
+    "S01": "Rue du Village 12, Grâce-Hollogne",
+    "S02": "Rue des Prés 5, Grâce-Hollogne",
+    "S03": "Rue du Fort 8, Awans",
+    "S04": "Rue de la Station 22, Awans",
+    "S05": "Rue du Bois 14, Grâce-Hollogne"
 };
+
+log("Adresses sonomètres chargées :", Object.keys(SONO_ADDRESSES).length);
